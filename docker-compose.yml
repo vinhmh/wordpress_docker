@@ -1,0 +1,41 @@
+version: '3.1'
+networks:
+  naustok_wp:
+    external: true
+    driver: overlay
+
+services:
+
+  wordpress:
+    image: wordpress
+    environment:
+      WORDPRESS_DB_HOST: wordpress_mysql
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: 3rZj&NVnVE
+      WORDPRESS_DB_NAME: wordpress_db
+    volumes:
+      - /var/www/wordpress:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    networks:
+      - "naustok_wp"
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "false"
+      MYSQL_DATABASE: wordpress_db
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - /var/www/mysql57:/var/lib/mysql
+    networks:
+      - "naustok_wp"
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: mysql
+    networks:
+      - "naustok_wp"
